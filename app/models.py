@@ -1,9 +1,9 @@
-from sqlalchemy import Integer, String, Float, Boolean, ForeignKey, Date, Column, TIMESTAMP, func, cast
-from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
+from sqlalchemy import Integer, String, Float, Date
+from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from datetime import date
 
-from app.config import settings
+from config import settings
 
 
 engine = create_async_engine(settings.get_db_url())
