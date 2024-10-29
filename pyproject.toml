@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "abolpictureapi"
+version = "0.1.0"
+description = "REST API for working with images"
+authors = ["Alexey <rybolovlevalexey@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.4"
+uvicorn = "^0.32.0"
+sqlalchemy = "^2.0.36"
+alembic = "^1.13.3"
+pydantic = "^2.9.2"
+pydantic-settings = "^2.6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
