@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 
-from routers.pictures import pictures_router
-from routers.users import users_router
+from app.routers.pictures import pictures_router
+from app.routers.users import users_router
 from config import settings
 
 

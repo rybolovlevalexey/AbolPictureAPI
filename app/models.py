@@ -1,7 +1,7 @@
-from sqlalchemy import Integer, String, Float, Date
+from sqlalchemy import Integer, String, Float, Date, DateTime
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
-from datetime import date
+from datetime import date, datetime
 
 from config import settings
 
@@ -20,6 +20,14 @@ class PictureInfo(Base):
 
     picture_title: Mapped[str] = mapped_column(String, nullable=False)
     path_to_file: Mapped[str] = mapped_column(String, nullable=False)
-    upload_date: Mapped[date] = mapped_column(Date, nullable=False)
+    upload_date: Mapped[date] = mapped_column(Date, nullable=False, default=datetime.now().date())
     resolution: Mapped[str] = mapped_column(String, nullable=False)
     size: Mapped[float] = mapped_column(Float, nullable=False)
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    username: Mapped[str] = mapped_column(String, unique=True)
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
+    created_at: Mapped[date] = mapped_column(Date, default=datetime.now().date())

@@ -19,6 +19,7 @@ python-jose = "^3.3.0"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-multipart = "^0.0.16"
 requests = "^2.32.3"
+bcrypt = "3.2.0"
 
 
 [build-system]

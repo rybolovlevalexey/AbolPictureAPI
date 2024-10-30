@@ -6,5 +6,6 @@ class User(BaseModel):
     password: str
 
 
-class UserInDB(User):
+class UserInDB(BaseModel):
+    username: str
     hashed_password: str
