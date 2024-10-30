@@ -33,8 +33,8 @@ async def post_new_picture(file: UploadFile = File(...),
     pic_metadata = pic_acts.get_metadata()
     await CrudPictureActions.add_new_picture(
         file_name,
-        str(os.path.join("data", file_name)),
-        (pic_metadata["resolution"]["width"], pic_metadata["resolution"]["height"]),
+        pic_metadata.file_path,
+        (pic_metadata.width, pic_metadata.height),
         float(file_size.split()[0]))
 
     return JSONResponse(status_code=201, content={"msg": "Новая картинка успешно сохранена"})
