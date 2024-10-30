@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete, or_
+import asyncio
 
 
 from app.models import User, PictureInfo, async_session_maker
@@ -17,6 +18,27 @@ class CrudPictureActions:
                                       resolution=f"{resolution[0]}-{resolution[1]}", size=size)
             session.add(new_picture)
             await session.commit()
+
+    @staticmethod
+    async def delete_picture(picture_id: int) -> bool:
+        try:
+            session: AsyncSession
+            async with async_session_maker() as session:
+                query = delete(PictureInfo).where(PictureInfo.id == picture_id)
+                await session.execute(query)
+                await session.commit()
+        except Exception:
+            return False
+        return True
+
+    @staticmethod
+    async def get_picture_path_by_id(picture_id: int) -> str | None:
+        session: AsyncSession
+        async with async_session_maker() as session:
+            query = select(PictureInfo.path_to_file).where(PictureInfo.id == picture_id)
+            query_res = await session.execute(query)
+            query_res = query_res.scalar_one_or_none()
+            return query_res
 
 
 class CrudUserActions:
@@ -55,3 +77,6 @@ class CrudUserActions:
                 return None
             db_user = query_res[0]
             return db_user
+
+
+print()

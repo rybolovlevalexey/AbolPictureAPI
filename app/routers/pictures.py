@@ -1,4 +1,5 @@
 import json
+import shutil
 import os
 from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.responses import JSONResponse
@@ -62,4 +63,11 @@ async def update_part_picture_info_by_id(picture_id: int):
 
 @pictures_router.delete("/{picture_id}")
 async def delete_picture_by_id(picture_id: int):
-    pass
+    picture_path = await CrudPictureActions.get_picture_path_by_id(picture_id)
+    # путь до картинки, которую надо удалить (будет удаляться вся её папка, чтобы удалить все производные картинки)
+    path_to_picture = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), picture_path
+    )
+    shutil.rmtree(os.path.dirname(path_to_picture))
+    await CrudPictureActions.delete_picture(picture_id)
+    return JSONResponse(status_code=200, content={"msg": f"Картинка id={picture_id} удалена успешно"})
