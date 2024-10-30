@@ -9,6 +9,7 @@ from io import BytesIO
 from app.get_current_user import get_current_user
 from app.services import PictureActions
 from app.crud import CrudPictureActions
+from app.schemas import PictureInfoDB
 
 pictures_router = APIRouter(prefix="/pictures")
 
@@ -38,17 +39,23 @@ async def post_new_picture(file: UploadFile = File(...),
         (pic_metadata.width, pic_metadata.height),
         float(file_size.split()[0]))
 
-    return JSONResponse(status_code=201, content={"msg": "Новая картинка успешно сохранена"})
+    return JSONResponse(status_code=201, content={"msg": "Новое изображение успешно сохранено"})
 
 
-@pictures_router.get("/list")
+@pictures_router.get("/list", response_model=list[PictureInfoDB])
 async def get_all_pictures_list():
-    pass
+    pictures_list = await CrudPictureActions.get_all_pictures_info()
+    if len(pictures_list) == 0:
+        return JSONResponse(status_code=204, content="Нет информации об изображениях")
+    return JSONResponse(status_code=200, content=[elem.model_dump_json() for elem in pictures_list])
 
 
-@pictures_router.get("/info/{picture_id}")
+@pictures_router.get("/info/{picture_id}", response_model=PictureInfoDB)
 async def get_picture_info_by_id(picture_id: int):
-    pass
+    cur_picture = await CrudPictureActions.get_info_by_id(picture_id)
+    if cur_picture is None:
+        return JSONResponse(status_code=204, content={"msg": f"Изображение с параметром id={picture_id} не найдено"})
+    return JSONResponse(status_code=200, content=cur_picture.model_dump_json())
 
 
 @pictures_router.put("/info/{picture_id}")
@@ -63,6 +70,10 @@ async def update_part_picture_info_by_id(picture_id: int):
 
 @pictures_router.delete("/{picture_id}")
 async def delete_picture_by_id(picture_id: int):
+    if not await CrudPictureActions.check_picture_id_in_db(picture_id):
+        return JSONResponse(status_code=204, content={
+            "msg": f"Изображение с параметром id={picture_id} не найдено"
+        })
     picture_path = await CrudPictureActions.get_picture_path_by_id(picture_id)
     # путь до картинки, которую надо удалить (будет удаляться вся её папка, чтобы удалить все производные картинки)
     path_to_picture = os.path.join(
@@ -70,4 +81,5 @@ async def delete_picture_by_id(picture_id: int):
     )
     shutil.rmtree(os.path.dirname(path_to_picture))
     await CrudPictureActions.delete_picture(picture_id)
-    return JSONResponse(status_code=200, content={"msg": f"Картинка id={picture_id} удалена успешно"})
+    return JSONResponse(status_code=200, content={
+        "msg": f"Изображение с параметром id={picture_id} удалено успешно"})

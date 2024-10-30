@@ -2,13 +2,46 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete, or_
 import asyncio
 
-
+from app.schemas import PictureInfoDB
 from app.models import User, PictureInfo, async_session_maker
 
 
 class CrudPictureActions:
     def __init__(self):
         pass
+
+    @staticmethod
+    async def check_picture_id_in_db(picture_id) -> bool:
+        session: AsyncSession
+        async with async_session_maker() as session:
+            query = select(PictureInfo).where(PictureInfo.id == picture_id)
+            query_res = await session.execute(query)
+            pictures_list = query_res.scalars().all()
+            if len(pictures_list) == 0:
+                return False
+            return True
+
+    @staticmethod
+    async def get_all_pictures_info():
+        session: AsyncSession
+        async with async_session_maker() as session:
+            query = select(PictureInfo)
+            query_res = await session.execute(query)
+            pictures_list = query_res.scalars().all()
+            if len(pictures_list) == 0:
+                return None
+            return [PictureInfoDB.model_validate(elem) for elem in pictures_list]
+
+    @staticmethod
+    async def get_info_by_id(picture_id: int) -> None | PictureInfoDB:
+        session: AsyncSession
+        async with async_session_maker() as session:
+            query = select(PictureInfo).where(PictureInfo.id == picture_id)
+            query_res = await session.execute(query)
+            cur_picture = query_res.scalar_one_or_none()
+            if cur_picture is None:
+                return None
+            return PictureInfoDB.model_validate(cur_picture)
 
     @staticmethod
     async def add_new_picture(picture_title: str, path_to_file: str, resolution: tuple[int, int], size: float):
@@ -79,4 +112,5 @@ class CrudUserActions:
             return db_user
 
 
-print()
+from pprint import pprint
+# print([elem.model_dump_json() for elem in asyncio.run(CrudPictureActions.get_all_pictures_info())])
