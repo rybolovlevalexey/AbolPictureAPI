@@ -5,7 +5,21 @@ from sqlalchemy import select
 from app.models import User, PictureInfo, async_session_maker
 
 
-class UserActions:
+class CrudPictureActions:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    async def add_new_picture(picture_title: str, path_to_file: str, resolution: tuple[int, int], size: float):
+        session: AsyncSession
+        async with async_session_maker() as session:
+            new_picture = PictureInfo(picture_title=picture_title, path_to_file=path_to_file,
+                                      resolution=f"{resolution[0]}-{resolution[1]}", size=size)
+            session.add(new_picture)
+            await session.commit()
+
+
+class CrudUserActions:
     def __init__(self):
         pass
 

@@ -18,16 +18,16 @@ class Base(AsyncAttrs, DeclarativeBase):
 class PictureInfo(Base):
     __tablename__ = "pictures_info"
 
-    picture_title: Mapped[str] = mapped_column(String, nullable=False)
-    path_to_file: Mapped[str] = mapped_column(String, nullable=False)
-    upload_date: Mapped[date] = mapped_column(Date, nullable=False, default=datetime.now().date())
-    resolution: Mapped[str] = mapped_column(String, nullable=False)
-    size: Mapped[float] = mapped_column(Float, nullable=False)
+    picture_title: Mapped[str] = mapped_column(String, nullable=False)  # название картинки
+    path_to_file: Mapped[str] = mapped_column(String, nullable=False)  # путь к файлу из корня проекта
+    upload_date: Mapped[date] = mapped_column(Date, nullable=False, default=datetime.now().date())  # дата загрузки
+    resolution: Mapped[str] = mapped_column(String, nullable=False)  # разрешение картинки
+    size: Mapped[float] = mapped_column(Float, nullable=False)  # размеры картинки в МБ
 
 
 class User(Base):
     __tablename__ = "users"
 
-    username: Mapped[str] = mapped_column(String, unique=True)
-    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[date] = mapped_column(Date, default=datetime.now().date())
+    username: Mapped[str] = mapped_column(String, unique=True)  # логин пользователя
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)  # хэш пароля пользователя
+    created_at: Mapped[date] = mapped_column(Date, default=datetime.now().date())  # дата регистрации
